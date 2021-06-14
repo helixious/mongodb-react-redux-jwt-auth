@@ -1,0 +1,29 @@
+{
+  "name": "mongodb-react-redux-jwt-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "module": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/helixious/mongodb-react-redux-jwt-auth.git"
+  },
+  "author": "sle",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/helixious/mongodb-react-redux-jwt-auth/issues"
+  },
+  "homepage": "https://github.com/helixious/mongodb-react-redux-jwt-auth#readme",
+  "dependencies": {
+    "create-react-app": "^4.0.3",
+    "esm": "^3.2.25",
+    "express": "^4.17.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^5.2.0",
+    "react-validation": "^3.0.7"
+  }
+}
