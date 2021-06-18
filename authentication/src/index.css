@@ -11,3 +11,18 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  /* font-family: 'Pacifico', cursive; */
+  font-family: 'Orbitron', sans-serif;
+}
+.card-header {
+  background-color: red;
+  color: lightslategray;
+  font-family: 'Orbitron', sans-serif;
+}
+
+.form-group {
+  margin-bottom: 8px;
+}

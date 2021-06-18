@@ -1,4 +1,6 @@
 import React, { useState, useRef } from "react";
+import {BrowserRouter, Switch, Route, Link } from "react-router-dom";
+// import Cookies from "js-cookie";
 // import Form from "react-validation/build/form";
 import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
@@ -6,6 +8,7 @@ import { Button, Alert, Breadcrumb, Card, Form, Row, Container } from 'react-boo
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import AuthService from "../services/auth.service";
+import UserService from "../services/user.service";
 
 const required = (value) => {
   if (!value) {
@@ -18,8 +21,8 @@ const required = (value) => {
 };
 
 const Login = (props) => {
+    // const [loginState, setLoginState] = useState({...props.is});
   const form = useRef();
-  const checkBtn = useRef();
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -48,44 +51,63 @@ const Login = (props) => {
     setMessage("");
     setLoading(true);
 
-    console.log(username, password);
-    // AuthService.login(username, password).then(
-    //     () => {
-    //         props.history.push("/profile");
-    //         window.location.reload();
-    //     },
-    //     (error) => {
-    //         const resMessage =
-    //             (error.response &&
-    //                 error.response.data &&
-    //                 error.response.data.message) ||
-    //             error.message ||
-    //             error.toString();
+    AuthService.login(username, password).then(
+        (result) => {
+            if(result.message){
+                setMessage(result.message);
+                setLoading(false);
+            } else {
 
-    //         setLoading(false);
-    //         setMessage(resMessage);
-    //     }
-    // );
+                console.log(result);
+                props.setCurrentUser(result.user);
+                props.onChange(1);
+                props.history.push("/profile");
+            }
+
+            
+            // window.location.reload();
+        },
+        (error) => {
+            const resMessage =
+                (error.response &&
+                    error.response.data &&
+                    error.response.data.message) ||
+                error.message ||
+                error.toString();
+            
+            props.onChange(0);
+            setLoading(false);
+            setMessage(resMessage);
+        }
+    );
   };
-
+  //"card col-12 col-lg-4 mt-2 hv-center align-items-center"
   return (
-      <Container>
-          <Form className="card col-12 col-lg-4 mt-2 hv-center align-items-center" onSubmit={handleLogin} ref={form}>
-              <Row className="p-4">
-                  <Form.Group>
-                      <Form.Label>Email Address</Form.Label>
-                      <Form.Control type="email" placeholder="Enter email" value={username} onChange={onChangeUsername}></Form.Control>
-                      <Form.Text className="muted">We'll never share your email with anyone else.</Form.Text>
-                  </Form.Group>
-                  <Form.Group>
-                      <Form.Label>Password</Form.Label>
-                      <Form.Control type="Password" placeholder="Password" value={password} onChange={onChangePassword}></Form.Control>
-                  </Form.Group>
-              </Row>
+    <Card className="align-items-center">
 
-              <Button className="mb-2" variant="primary" type="submit" size="sm" ref={checkBtn}>Login</Button>
-          </Form>
-      </Container>
+          <h3 className="navbar-brand mt-3">Account</h3>
+
+    <Card.Body>
+        <Form className="card align-items-center p-4" onSubmit={handleLogin} ref={form}>
+            <Row>
+                <Form.Group>
+                    <Form.Label>Email Address</Form.Label>
+                    <Form.Control type="email" placeholder="Enter email" value={username} onChange={onChangeUsername}></Form.Control>
+                    <Form.Text className="muted">We'll never share your email with anyone else.</Form.Text>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>Password</Form.Label>
+                    <Form.Control type="Password" placeholder="Password" value={password} onChange={onChangePassword}></Form.Control>
+                    <Form.Text className="muted">No Account? <Link to="/signup">Create one!</Link></Form.Text>
+                </Form.Group>
+            </Row>
+
+            {loading ? (<span className="spinner-border spinner-border-sm"></span>) : (<Button className="m-2" variant="primary" type="submit" size="md">Sign in</Button>)}
+        </Form>
+        {message ? (<Alert variant="warning">{message}</Alert>) : null}
+    </Card.Body>
+</Card>
+      
     //   <div className="card col-12 col-lg-4 mt-2 hv-center align-items-center">
           
           

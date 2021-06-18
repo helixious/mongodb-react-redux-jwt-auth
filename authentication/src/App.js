@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
 import {BrowserRouter, Switch, Route, Link } from "react-router-dom";
-
+import {NavDropdown, Navbar, Nav} from "react-bootstrap";
+// import Cookies from "js-cookie";
 // import "bootstrap/dist/css/bootstrap.min.css";
 // import "./App.css";
 
 import AuthService from "./services/auth.service";
 
 import Login from "./components/Login";
+import SignOut from "./components/Logout";
+import Signup from "./components/Signup";
+import Profile from "./components/Profile";
 // import Register from "./components/Register";
 // import Home from "./components/Home";
 // import Profile from "./components/Profile";
@@ -15,13 +19,18 @@ import Login from "./components/Login";
 // import BoardAdmin from "./components/BoardAdmin";
 
 const App = () => {
+  const [loginState, setLoginState] = useState(0);
   const [showModeratorBoard, setShowModeratorBoard] = useState(false);
   const [showAdminBoard, setShowAdminBoard] = useState(false);
   const [currentUser, setCurrentUser] = useState(undefined);
 
-  useEffect(() => {
-    const user = AuthService.getCurrentUser();
 
+  useEffect(() => {
+    console.log('use-effect triggered');
+    const user = AuthService.getCurrentUser();
+    AuthService.isLoggedIn().then(result => {
+      setLoginState(result.active);
+    });
     if (user) {
       setCurrentUser(user);
       setShowModeratorBoard(user.roles.includes("ROLE_MODERATOR"));
@@ -29,94 +38,42 @@ const App = () => {
     }
   }, []);
 
-  const logOut = () => {
-    AuthService.logout();
-  };
+  // const logOut = () => {
+  //   AuthService.logout();
+  // };
 
   return (
     <BrowserRouter>
     
     <div>
-      <nav className="navbar navbar-expand navbar-dark bg-dark">
-        <Link to={"/"} className="navbar-brand">
-          bezKoder
-        </Link>
-        <div className="navbar-nav mr-auto">
-          <li className="nav-item">
-            <Link to={"/home"} className="nav-link">
-              Home
-            </Link>
-          </li>
-
-          {showModeratorBoard && (
-            <li className="nav-item">
-              <Link to={"/mod"} className="nav-link">
-                Moderator Board
-              </Link>
-            </li>
-          )}
-
-          {showAdminBoard && (
-            <li className="nav-item">
-              <Link to={"/admin"} className="nav-link">
-                Admin Board
-              </Link>
-            </li>
-          )}
-
-          {currentUser && (
-            <li className="nav-item">
-              <Link to={"/user"} className="nav-link">
-                User
-              </Link>
-            </li>
-          )}
-        </div>
-
-        {currentUser ? (
-          <div className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to={"/profile"} className="nav-link">
-                {currentUser.username}
-              </Link>
-            </li>
-            <li className="nav-item">
-              <a href="/login" className="nav-link" onClick={logOut}>
-                LogOut
-              </a>
-            </li>
-          </div>
-        ) : (
-          <div className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <Link to={"/login"} className="nav-link">
-                Login
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link to={"/register"} className="nav-link">
-                Sign Up
-              </Link>
-            </li>
-          </div>
-        )}
-      </nav>
-
-      <div className="container mt-3">
-        
-        <Switch>
-          {/* <Route exact path={["/", "/home"]} component={Home} /> */}
-          <Route exact path="/login" component={Login} />
+      <Navbar collapseOnSelect expand="lg" className="px-3" variant="dark" bg="secondary" sticky="top">
+        <Navbar.Brand as={Link} eventKey={0} to="/home">Helixious</Navbar.Brand>
+        <Navbar.Toggle aria-controls="responsivenavbar-nav"/>
+        <Navbar.Collapse id="responsive-navbar-nav">
+            {loginState ? (
+              <Nav className="justify-content-end" style={{width:"100%"}}>
+                <Nav.Link as={Link} eventKey={1} to="/home">Home</Nav.Link>
+                <Nav.Link as={Link} eventKey={3} to="/profile">Profile</Nav.Link>
+                <Nav.Link as={Link} eventKey={2.2} to="/signout">Sign Out</Nav.Link>
+              </Nav>
+            ) : (
+                <Nav className="justify-content-end" style={{width:"100%"}}>
+                  <Nav.Link as={Link} eventKey={2.1} to="/signin">Sign In</Nav.Link>
+                </Nav>
+            )}
+        </Navbar.Collapse>
+      </Navbar>
+      <Switch>Signup
+          <Route exact path="/signin" render={(props) => <Login {...props} onChange={setLoginState} setCurrentUser={setCurrentUser}/>} />
+          <Route exact path="/signout" render={(props) => <SignOut {...props} onChange={setLoginState} setCurrentUser={setCurrentUser}/>} />
+          <Route exact path="/signup" render={(props) => <Signup {...props} onChange={setLoginState} setCurrentUser={setCurrentUser}/>} />
+          <Route exact path="/profile" render={(props) => <Profile {...props} currentUser={currentUser}/>} />
           {/* <Route exact path="/register" component={Register} />
           <Route exact path="/profile" component={Profile} />
           <Route path="/user" component={BoardUser} />
           <Route path="/mod" component={BoardModerator} />
           <Route path="/admin" component={BoardAdmin} /> */}
         </Switch>
-        
-        
-      </div>
     </div>
     </BrowserRouter>
   );
